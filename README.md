@@ -1,2 +1,1 @@
-# remote_weather_station
-Remote Weather Station
+# Remote Weather Station
