@@ -33,4 +33,8 @@ erase_flash: download
 
 flash_firmware:
 	${ESP_TOOL} --chip ${CHIP} --port ${PORT} --baud ${BAUDRATE} \
-	write_flash --flash_size=4MB-c1 0 ${FIRMWARE_DIR}/${FIRMWARE}
+	write_flash --flash_size=4MB 0x0 ${FIRMWARE_DIR}/${FIRMWARE}
+
+clean:
+	rm -rf ${FIRMWARE_DIR}/*
+	# rm -rf ${GENERATED_DIR}
