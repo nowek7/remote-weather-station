@@ -1,24 +1,44 @@
-# TODO: Refactor to class!
+from common import util
 
-def on_message(topic, message):
-    print((topic, message))
+from umqtt.simple import MQTTClient
 
-def get_mqtt_client(project_id, cloud_region, registry_id, device_id, jwt):
-    """Create our MQTT client. The client_id is a unique string that identifies
-    this device. For Google Cloud IoT Core, it must be in the format below."""
+class MqttClient:
+    def __init__(self, config):
+        jwt = util.create_jwt(config.gcp['project_id'],
+                              config.token['private_key'],
+                              config.token['algorithm'],
+                              config.token['token_ttl'])
 
-    client_id = 'projects/{}/locations/{}/registries/{}/devices/{}'.format(project_id, cloud_region, registry_id, device_id)
-    print('Sending message with password {}'.format(jwt))
+        self.__client_id = self.__gcp_id(config.gcp)
+        self.__client = MQTTClient(self.__client_id.encode('utf-8'),
+                                   server = config.gcp['mqtt_bridge_hostname'],
+                                   port = config.gcp['mqtt_bridge_port'],
+                                   user = b'ignored',
+                                   password = jwt.encode('utf-8'),
+                                   ssl = True)
 
-    client = MQTTClient(client_id.encode('utf-8'),
-                        server=config.google_cloud_config['mqtt_bridge_hostname'],
-                        port=config.google_cloud_config['mqtt_bridge_port'],
-                        user=b'ignored',
-                        password=jwt.encode('utf-8'),
-                        ssl=True)
+    def __del__(self):
+        pass
 
-    client.set_callback(on_message)
-    client.connect()
-    client.subscribe('/devices/{}/config'.format(device_id), 1)
-    client.subscribe('/devices/{}/commands/#'.format(device_id), 1)
-    return client
+    def __gcp_id(config):
+        return f'projects/{config["project_id"]}/locations/{config["cloud_region"]}/registries/{config["registry_id"]}/devices/{config["device_id"]}'
+
+    def connect(self):
+        self.__client.connect()
+
+    def disconnect(self):
+        self.__client.disconnect()
+
+    def register_cb(self, callback):
+        self.__client.set_callback(callback)
+
+    def subcribe(self, topic, qos = 1):
+        self.__client.subscribe(topic, qos)
+
+    def subcribe(self, topics):
+        for topic, qos in topics.items():
+            self.__client.subscribe(topic, qos)
+
+    def publish(self, topic, message, retain = False, qos = 0):
+        self.__client.publish(topic, message, retain, qos)
+        self.__client.wait_msg()

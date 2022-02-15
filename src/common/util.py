@@ -11,6 +11,9 @@ def get_config() -> dict:
         config = ujson.load(json_file)
     return config
 
+def b42_urlsafe_encode(payload):
+    return string.translate(b2a_base64(payload)[:-1].decode('utf-8'),{ ord('+'):'-', ord('/'):'_' })
+
 def create_jwt(project_id, private_key, algorithm, token_ttl):
     print("Creating JWT...")
     private_key = rsa.PrivateKey(*private_key)
