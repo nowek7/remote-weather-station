@@ -1,0 +1,5 @@
+{
+    "configuration": "FlashFreq=40,UploadSpeed=115200,PartitionScheme=fatflash,DebugLevel=warn",
+    "board": "firebeetle32:esp32:firebeetle32",
+    "sketch": "remote_weather_station\\remote_weather_station.ino"
+}
