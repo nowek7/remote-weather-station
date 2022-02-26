@@ -1,5 +1,8 @@
 #include "provider.hpp"
 
+#include <sstream>
+#include <Arduino.h>
+
 namespace network
 {
   void init(const WiFiMode_t mode)
@@ -18,15 +21,17 @@ namespace network
       WiFi.disconnect();
     }
 
-    int noTries = 5;
     WiFi.begin(ssid.c_str(), password.c_str());
-    while ((WiFi.status() != WL_CONNECTED) && (noTries != 0))
+    Serial.print("Try to connect to WIFI...");
+    while ((WiFi.status() != WL_CONNECTED))
     {
       delay(500);
-      Serial.print("Connecting...");
-      noTries--;
+      Serial.print(".");
     }
+    Serial.println("");
+    Serial.println("Device is connnected to WIFI!");
 
+    // Sanity check
     return (WiFi.status() == WL_CONNECTED) ? true : false;
   }
 
@@ -49,5 +54,25 @@ namespace network
     }
     WiFi.scanDelete();
     return networks;
+  }
+
+  void print()
+  {
+    std::stringstream ss;
+
+    // WiFi.scanNetworks will return the number of networks found
+    auto networks = getAvailableNetworks();
+    ss << "Found number of networks: " << networks.size() << "\n";
+
+    for (std::size_t i = 0; i < networks.size(); ++i)
+    {
+      ss << "SSID: " << std::get<0>(networks[i]) << " | ";
+      ss << std::get<1>(networks[i]) << "|";
+      ss << std::get<2>(networks[i]) << "|";
+      ss << std::get<3>(networks[i]) << "\n";
+    }
+
+    const std::string rawLog = ss.str();
+    Serial.println(rawLog.c_str());
   }
 }

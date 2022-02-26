@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 namespace network
 {
@@ -27,7 +27,6 @@ namespace network
 
   /**
    * @brief Disconnect from access point
-   *
    */
   void disconnect();
 
@@ -37,4 +36,9 @@ namespace network
    * @return std::vector<network_t>
    */
   std::vector<network_t> getAvailableNetworks();
+
+  /**
+   * @brief Print available networks
+   */
+  void printAvailableNetworks();
 } // network
