@@ -56,7 +56,7 @@ namespace network
     return networks;
   }
 
-  void print()
+  void printAvailableNetworks()
   {
     std::stringstream ss;
 
