@@ -7,7 +7,7 @@ namespace sensor
   namespace analog
   {
     TemperatureSensor::TemperatureSensor(const int pin, const std::string name, const float voltage):
-      sensor::Sensor(pin, name),
+      Sensor(pin, name),
       mVoltage(voltage)
     {
       Serial.println("TemperatureSensor");
