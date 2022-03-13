@@ -85,70 +85,9 @@ In the next section, this one will be explains.
 
 ---
 
-## Setup Google Cloud Platform for IoT devices. The instruction from [here](https://github.com/GoogleCloudPlatform/google-cloud-iot-arduino)
+## Setup Google Cloud Platform for IoT devices.
 
-Enable the Cloud IoT Core API by opening the [Google Cloud IoT Core console](https://console.cloud.google.com/iot/).
-Next, create your device registry as described in [the Quickstart](https://cloud.google.com/iot/docs/quickstart) or by using the [Google Cloud SDK](https://cloud.google.com/sdk).
-
-If you're using the SDK, the following commands will setup PubSub and Cloud IoT
-Core for testing on your Arduino device:
-
-Create the PubSub topic and subscription:
-
-    gcloud pubsub topics create atest-pub --project=YOUR_PROJECT_ID
-    gcloud pubsub subscriptions create atest-sub --topic=atest-pub
-
-Create the Cloud IoT Core registry:
-
-    gcloud iot registries create atest-registry \
-      --region=us-central1 --event-notification-config=topic=atest-pub
-
-Generate an Elliptic Curve (EC) private / public key pair:
-
-    openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
-    openssl ec -in ec_private.pem -pubout -out ec_public.pem
-
-Register the device using the keys you generated:
-
-    gcloud iot devices create atest-dev --region=us-central1 \
-        --registry=atest-registry \
-        --public-key path=ec_public.pem,type=es256
-
-At this point, your registry is created and your device has been added to the
-registry so you're ready to connect it.
-
-Find and replace the following values first:
-* Project ID (get from console or `gcloud config list`)
-* Location (default is `us-central1`)
-* Registry ID (created in previous steps, e.g. `atest-reg`)
-* Device ID (created in previous steps, e.g. `atest-device`)
-
-You will also need to extract your private key using the following command:
-
-    openssl ec -in ec_private.pem -noout -text
-
-... and will need to copy the output for the private key bytes into the private
-key string in your Arduino project.
-
-When you run the sample, the device will connect and receive configuration
-from Cloud IoT Core. When you change the configuration in the Cloud IoT Core
-console, that configuration will be reflected on the device.
-
-Before the examples will work, you will also need to configure the root
-certificate as described in the configuration headers.
-
-After you have published telemetry data, you can read it from the PubSub topic
-using the [Google Cloud SDK](https://cloud.google.com/sdk). With the SDK installed,
-run the following command to create a :
-
-```
-gcloud pubsub subscriptions create <your-subscription-name> --topic=<your-iot-pubsub-topic>
-```
-
-Then read the telemetry messages:
-```
-gcloud pubsub subscriptions pull --limit 500 --auto-ack <your-subscription-name>
-```
+The instruction is [here](https://github.com/GoogleCloudPlatform/google-cloud-iot-arduino).
 
 ---
 

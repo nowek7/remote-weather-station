@@ -82,36 +82,46 @@ void loop()
   network::gcp::IoTClient iotClient(gcpConfig);
   iotClient.connect();
 
-  // Analog sensors.
-  analog_sensor::TemperatureSensor temperatureSHT30(A0,
-                                                    "Gravity: Analog SHT30 Temperature Sensor",
-                                                    sensor::VOLTAGE_5);
-  analog_sensor::HumuniditySensor humuniditySHT30(A1,
-                                                  "Gravity: Analog SHT30 Humidity Sensor",
-                                                  sensor::VOLTAGE_5);
-  analog_sensor::GrayscaleSensor grayscale(A2, "Gravity: Analog Grayscale Sensor");
-  analog_sensor::LightscaleSensor lighscale(A3, "Gravity: Analog Grayscale Sensor");
-
-  // I2C sensor.
-  i2c_sensor::PressureSensor pressureBMP388(-1,
-                                            "Gravity: BMP388 Barometric Pressure Sensors",
-                                            3.0,
-                                            i2c_sensor::Precision::ULTRA_LOW_PRECISION);
-
   // Create payload.
   DynamicJsonDocument json(PAYLOAD_SIZE);
-  json["temperature"] = temperatureSHT30.readValue();
-  json["humunidity"] = humuniditySHT30.readValue();
-  json["grayscale"] = grayscale.readValue();
-  json["lighscale"] = lighscale.readValue();
-  json["pressure"] = pressureBMP388.readValue();
+
+  // Analog sensors.
+  {
+    {
+      analog_sensor::TemperatureSensor temperatureSHT30(A0,
+                                                        "Gravity: Analog SHT30 Temperature Sensor",
+                                                        sensor::VOLTAGE_5);
+      json["temperature"] = temperatureSHT30.readValue();
+    }
+    {
+      analog_sensor::HumuniditySensor humuniditySHT30(A1,
+                                                      "Gravity: Analog SHT30 Humidity Sensor",
+                                                      sensor::VOLTAGE_5);
+      json["humunidity"] = humuniditySHT30.readValue();
+    }
+    {
+      analog_sensor::GrayscaleSensor grayscale(A2, "Gravity: Analog Grayscale Sensor");
+      json["grayscale"] = grayscale.readValue();
+    }
+    {
+      analog_sensor::LightscaleSensor lighscale(A3, "Gravity: Analog Lighscale Sensor");
+      json["lighscale"] = lighscale.readValue();
+    }
+
+    // I2C sensor.
+    {
+      i2c_sensor::PressureSensor pressureBMP388(-1,
+                                                "Gravity: BMP388 Barometric Pressure Sensors",
+                                                3.0,
+                                                i2c_sensor::Precision::ULTRA_LOW_PRECISION);
+      json["pressure"] = pressureBMP388.readValue();
+    }
+  }
 
   // Generate the minified JSON and send it to the Serial port.
   std::string payload;
   const auto writtenBytes = serializeJson(json, payload);
   iotClient.publish(payload);
-
-  Serial.println(payload.c_str());
 
   network::disconnect();
 
