@@ -4,7 +4,7 @@
 
 Simple (remote) weather station which send data directly to cloud storage (Google Cloud Platform) via MQTT.
 
-More details is in the following [presentation](/docs/zdalna_stacja_pogodowa_michal_nowak.pdf). Unfortunately only in polish.
+More details is in the following [presentations](/docs).
 
 ## Prerequisites
 
