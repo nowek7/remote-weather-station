@@ -2,9 +2,9 @@
 
 ## Description
 
-Simple (remote) weather station which send data directly to cloud storage (Google Cloud Platform) via MQTT.
+Simple (remote) weather station which sends data directly to cloud storage (Google Cloud Platform) via MQTT.
 
-More details is in the following [presentations](/docs).
+More details are in the following [presentations](/docs).
 
 ## Prerequisites
 
